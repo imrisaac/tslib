@@ -497,7 +497,7 @@ int main(int argc, char **argv)
 
 redocalibration:
 	tick = getticks();
-	get_sample(ts, &cal, 0, getPixelCoordinates(315, xres).x + CROSS_BOUND_DIST, getPixelCoordinates(315, yres).y + CROSS_BOUND_DIST, "Top left", redo);
+	get_sample(ts, &cal, 0, 1080/2, 1080/2, "Top left", redo);
 	redo = 0;
 	if (getticks() - tick < min_interval) {
 		redo = 1;
@@ -510,7 +510,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 0, getPixelCoordinates(45, xres).x - CROSS_BOUND_DIST, getPixelCoordinates(45, yres).y + CROSS_BOUND_DIST, "Top right", redo);
+	get_sample(ts, &cal, 0, 1080/2, 1080/2, "Top right", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
@@ -522,7 +522,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 0, getPixelCoordinates(135, xres).x - CROSS_BOUND_DIST, getPixelCoordinates(135, yres).y - CROSS_BOUND_DIST, "Bot right", redo);
+	get_sample(ts, &cal, 0, 1080/2, 1080/2, "Bot right", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
@@ -534,7 +534,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 0, getPixelCoordinates(225, xres).x + CROSS_BOUND_DIST, getPixelCoordinates(225, yres).y - CROSS_BOUND_DIST, "Bot left", redo);
+	get_sample(ts, &cal, 0, 1080/2, 1080/2, redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
