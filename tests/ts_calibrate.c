@@ -534,7 +534,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 0, 1080/2, 1080/2, redo);
+	get_sample(ts, &cal, 0, 1080/2, 1080/2, "Center", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
