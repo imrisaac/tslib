@@ -41,6 +41,65 @@ static int palette[] = {
 };
 #define NR_COLORS (sizeof(palette) / sizeof(palette[0]))
 
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+double sin(double x) {
+    const double PI = 3.14159265358979323846;
+
+    // Reduce x to the range [-pi, pi]
+    while (x < -PI) {
+        x += 2 * PI;
+    }
+    while (x > PI) {
+        x -= 2 * PI;
+    }
+
+    double sum = 0;
+    double term = x;
+    int sign = 1;
+    int n = 1;
+
+    // Use the Taylor series to calculate sin(x)
+    while (sum + term != sum) {
+        sum += term;
+        term = -term * x * x / (2 * n) / (2 * n + 1);
+        sign = -sign;
+        n++;
+    }
+
+    return sum;
+}
+
+double cos(double x) {
+    const double PI = 3.14159265358979323846;
+
+    // Reduce x to the range [-pi, pi]
+    while (x < -PI) {
+        x += 2 * PI;
+    }
+    while (x > PI) {
+        x -= 2 * PI;
+    }
+
+    double sum = 0;
+    double term = 1;
+    int sign = 1;
+    int n = 0;
+
+    // Use the Taylor series to calculate cos(x)
+    while (sum + term != sum) {
+        sum += term;
+        term = -term * x * x / (2 * n + 2) / (2 * n + 1);
+        sign = -sign;
+        n++;
+    }
+
+    return sum;
+}
+
 static void sig(int sig)
 {
 	close_framebuffer();
@@ -233,6 +292,22 @@ static void clearbuf(struct tsdev *ts)
 	}
 }
 
+Point getPixelCoordinates(double angle, int diameter) {
+    const int radius = diameter / 2;
+    const int center_x = radius;
+    const int center_y = radius;
+
+    Point p;
+    p.x = center_x + radius * cos(angle);
+    p.y = center_y - radius * sin(angle); // Subtract instead of add
+
+    // Invert the y-coordinate to match the upper-left origin
+    p.y = diameter - p.y - 1;
+
+    return p;
+}
+
+
 static void help(void)
 {
 	ts_print_ascii_logo(16);
@@ -422,7 +497,7 @@ int main(int argc, char **argv)
 
 redocalibration:
 	tick = getticks();
-	get_sample(ts, &cal, 0, CROSS_BOUND_DIST,        CROSS_BOUND_DIST,        "Top left", redo);
+	get_sample(ts, &cal, 0, getPixelCoordinates(315, xres).x + CROSS_BOUND_DIST, getPixelCoordinates(315, yres).y + CROSS_BOUND_DIST, "Top left", redo);
 	redo = 0;
 	if (getticks() - tick < min_interval) {
 		redo = 1;
@@ -435,7 +510,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 1, xres - CROSS_BOUND_DIST, CROSS_BOUND_DIST,        "Top right", redo);
+	get_sample(ts, &cal, 0, getPixelCoordinates(45, xres).x - CROSS_BOUND_DIST, getPixelCoordinates(45, yres).y + CROSS_BOUND_DIST, "Top right", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
@@ -447,7 +522,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 2, xres - CROSS_BOUND_DIST, yres - CROSS_BOUND_DIST, "Bot right", redo);
+	get_sample(ts, &cal, 0, getPixelCoordinates(135, xres).x - CROSS_BOUND_DIST, getPixelCoordinates(135, yres).y - CROSS_BOUND_DIST, "Bot right", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
@@ -459,7 +534,7 @@ redocalibration:
 	clearbuf(ts);
 
 	tick = getticks();
-	get_sample(ts, &cal, 3, CROSS_BOUND_DIST,        yres - CROSS_BOUND_DIST, "Bot left", redo);
+	get_sample(ts, &cal, 0, getPixelCoordinates(225, xres).x + CROSS_BOUND_DIST, getPixelCoordinates(225, yres).y - CROSS_BOUND_DIST, "Bot left", redo);
 	if (getticks() - tick < min_interval) {
 		redo = 1;
 	#ifdef DEBUG
